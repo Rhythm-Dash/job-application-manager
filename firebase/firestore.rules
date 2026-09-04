@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /jobs/{jobId} {
+      allow read: if signedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /applications/{applicationId} {
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /platforms/{platformId} {
+      allow read: if signedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /settings/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /searches/{searchId} {
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /syncs/{syncId} {
+      allow read: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    match /activity_logs/{logId} {
+      allow read: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
