@@ -44,3 +44,30 @@ For each development step:
 The user will provide local command output, screenshots of errors when necessary, Firebase Console actions, and manual verification of browser behaviour.
 
 Passwords, tokens, API keys, browser cookies and session data must never be committed.
+
+
+## Validation result
+
+Validated on the user's Windows 11 x64 development machine:
+
+- Node.js: `v24.12.0`
+- npm: `11.6.2`
+- Git: `2.55.0.windows.1`
+- Angular CLI: `21.0.5`
+
+### PowerShell note
+
+The system blocks direct execution of PowerShell `.ps1` wrappers, producing `PSSecurityException` for commands such as `npm` and `ng`.
+
+The underlying command wrappers work correctly:
+
+```powershell
+npm.cmd --version
+ng.cmd version
+```
+
+The executable paths were also verified with `where.exe`.
+
+### Result
+
+Environment validation passed. The current environment is ready for the next phase: creating the Angular application.
